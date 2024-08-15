@@ -1,0 +1,11 @@
+{
+    "GET /api/topics": {
+    "EXAMPLE": "this is an example response please delete",
+    "description": "serves an array of all topics ",
+    "queries": [],
+    "send": {}, 
+    "exampleResponse": {
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
+  }
+}
