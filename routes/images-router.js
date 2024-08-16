@@ -1,7 +1,8 @@
 const imagesRouter = require('express').Router()
 
-const {getAllImages} = require('../controllers/images-controller.js')
+const {getAllImages, getImageById} = require('../controllers/images-controller.js')
 
 imagesRouter.get('/', getAllImages)
+imagesRouter.get('/:image_id', getImageById)
 
 module.exports= imagesRouter

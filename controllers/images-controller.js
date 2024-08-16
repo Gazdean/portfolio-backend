@@ -1,4 +1,4 @@
-const {fetchAllImages} = require('../models/images-model.js')
+const {fetchAllImages, fetchImageById} = require('../models/images-model.js')
 
 exports.getAllImages = async (req, res, next) => {
     try {
@@ -8,3 +8,13 @@ exports.getAllImages = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getImageById = async (req, res, next) => {
+    const image_id = req.params.image_id
+    try {
+        const image = await fetchImageById(image_id);
+        res.status(200).send({image});
+    } catch (error) {
+        next(error);
+    }
+}
