@@ -1,4 +1,4 @@
-const db = require('../connection');
+const db = require('../connection.js');
 const format = require('pg-format');
 
 const seed = async ({imagesData, skillsData, projectsData, galleryData}) => {
@@ -84,7 +84,7 @@ const seed = async ({imagesData, skillsData, projectsData, galleryData}) => {
 
 
   } catch (error) {
-    console.log('error in seed.js', error)
+    console.log('ERROR in seed.js: ', error)
   }
 };
 

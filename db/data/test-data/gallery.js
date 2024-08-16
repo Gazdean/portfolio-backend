@@ -1,14 +1,20 @@
 module.exports = [
     {
-        image_url: 1,
-        title: "Final day at Northcoders, project group"
+        image_id: 1,
+        description: "My final project group, at the Northcodeers offices in manchester just before our  presentations",
+        title: "Final day at Northcoders, project group",
+        show: true
     },
     {
-        image_url: 2,
-        title: "At the summit of Mont Blanc"
+        image_id: 2,
+        description: "At the top of Mount Blanc, after a two day climb with stop offs at the Tête Rousse Hut 3167m, and Goutier hut at 3835m",
+        title: "At the summit of Mount Blanc",
+        show: true
     },
     {
-        image_url: 3,
-        title: "Self built brick pizza oven"
-    }
+        image_id: 3,
+        description: "My traditional brick pizza oven",
+        title: "Self built brick pizza oven",
+        show: false
+    },
 ]
