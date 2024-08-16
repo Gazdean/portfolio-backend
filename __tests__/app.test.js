@@ -38,7 +38,7 @@ describe('images', () => {
                     images.forEach(image => {
                         const keyArr = Object.keys(image)
                         expect(typeof image).toBe('object');
-                        expect(keyArr.length).toBe(3)
+                        expect(keyArr.length).toBe(3);
                     })
                     
                 });
