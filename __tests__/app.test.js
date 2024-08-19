@@ -4,7 +4,8 @@ const request = require("supertest");
 const app = require("../app.js");
 const db = require("../db/connection.js");
 
-const { fetchAllImages, fetchImageById } = require('../models/images-model.js');
+const { fetchAllImages } = require('../models/images-model.js');
+const { fetchAllSkills } = require('../models/skills-model.js');
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -27,7 +28,6 @@ describe('images', () => {
             const {images} = body
             expect(Array.isArray(images)).toBe(true);
             expect(images.length).toBe(7);
-            
         });
         it('responds with status code 200 and the image array elements to be objects, each with 3 properties and correct keys', async () => {
             const response = await request(app)
@@ -292,5 +292,44 @@ describe('skills', () => {
             const {body} = response
             expect(body.hasOwnProperty('skills')).toBe(true)
         });
+        it('responds with status code 200 and skills array of length 10', async () => {
+            const response = await request(app)
+            .get('/api/skills')
+            .expect(200)
+            const {body} = response
+            const {skills} = body
+            console.log('in tests', skills)
+            expect(Array.isArray(skills)).toBe(true);
+            expect(skills.length).toBe(10);
+        });
+        it('responds with status code 200 and the skills array elements to be objects', async () => {
+            const response = await request(app)
+            .get('/api/skills')
+            .expect(200)
+            const {body} = response
+            const {skills} = body
+            skills.forEach(skill => {
+                const skillKeys = Object.keys(skill)
+                expect(typeof skill).toBe('object');
+                expect(skillKeys.length).toBeLessThanOrEqual(6);
+                expect(typeof skill.skill_id).toBe('number')
+                expect(skill.skill_id).not.toBe(undefined)
+                expect(typeof skill.title).toBe('string')
+                expect(skill.title).not.toBe(undefined)
+                skill.icon_background_color && expect(typeof skill.icon_background_color).toBe('string')
+                skill.icon_color && expect(typeof skill.icon_color).toBe('string')
+                skill.icon_class && expect(typeof skill.icon_class).toBe('string')
+                skill.image_id && expect(typeof skill.image_id).toBe('number')
+                
+            }) 
+        });
+        it('should respond with status code 200 and the message "no skills are available" if there are no skill objects availabe', async () => {
+            jest.spyOn(db, 'query').mockResolvedValueOnce({ rows: [] });
+            await expect(fetchAllSkills()).rejects.toEqual({
+                status: 200,
+                msg: 'No skills available'
+            });
+            db.query.mockRestore();
+        }); 
     })
 })

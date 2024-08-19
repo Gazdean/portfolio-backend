@@ -31,9 +31,9 @@ module.exports = [
       title: "github",
     },
     {
-      icon_class: "fa-brands fa-trello",
-      icon_background_color:"#0079BF",
-      title: "Trello",
+      icon_class: "fa-brands fa-react",
+      icon_color:"blue",
+      title: "React Native",
     },
     {
       icon_class: "",
