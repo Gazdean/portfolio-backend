@@ -44,7 +44,7 @@ const seed = async ({imagesData, skillsData, projectsData, galleryData}) => {
         gallery_item_id SERIAL PRIMARY KEY,
         title VARCHAR(50) NOT NULL,
         description TEXT,
-        image_id INT REFERENCES images(image_id)
+        image_id INT REFERENCES images(image_id) ON DELETE CASCADE
       );
       `)
     
