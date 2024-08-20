@@ -302,7 +302,6 @@ describe('IMAGES', () => {
             expect(skill[0].image_id).toBe(null);
         })
     })
-
 })
 
 describe('SKILLS', () => {
