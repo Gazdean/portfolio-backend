@@ -610,33 +610,34 @@ describe('SKILLS', () => {
             expect(msg).toBe("400 Bad Request, no data sent!")
         })
     })
-    // // DELETE an image by image_id
-    // describe('DELETE/api/images/:image_id', () => {
-    //     it('returns a status code of 204 if the delete was successful', async () => {
-    //         const response = await request(app)
-    //         .delete('/api/images/2')
-    //         .expect(204)
-    //         const checkResponse = await request(app)
-    //         .get('/api/images/2')
-    //         .expect(404)
-    //         const {msg} = checkResponse.body
-    //         expect(msg).toBe('404 Not Found, image_id does not exist!')
-    //     })
-    //     it("returns a status code 404 with the message '404 Not Found, image_id does not exist!' if passed a valid but non existant image_id", async () => {
-    //         const response = await request(app)
-    //         .delete("/api/images/200")
-    //         .expect(404)
-    //         const{ body }= response
-    //         const { msg } = body;
-    //         expect(msg).toBe("404 Not Found, image_id does not exist!");
-    //     });
-    //     it("returns a status code 400 with the message '400 Bad Request, invalid data type!' if passed an invalid image_id", async () => {
-    //         const response = await request(app)
-    //         .delete("/api/images/thisIsAstring")
-    //         .expect(400)
-    //         const{ body }= response
-    //         const { msg } = body;
-    //         expect(msg).toBe("400 Bad Request, invalid data type!");
-    //     });
-    // })
+    describe('DELETE/api/skills/:skill_id', () => {
+        it('returns a status code of 204 if the delete was successful', async () => {
+            const response = await request(app)
+            .delete('/api/skills/2')
+            .expect(204)
+
+            // check skill has been deleted
+            const checkResponse = await request(app)
+            .get('/api/skills/2')
+            .expect(404)
+            const {msg} = checkResponse.body
+            expect(msg).toBe('404 Not Found, skill_id does not exist!')
+        })
+        it("returns a status code 404 with the message '404 Not Found, skill_id does not exist!' if passed a valid but non existant skill_id", async () => {
+            const response = await request(app)
+            .delete("/api/skills/200")
+            .expect(404)
+            const{ body }= response
+            const { msg } = body;
+            expect(msg).toBe("404 Not Found, skill_id does not exist!");
+        });
+        it("returns a status code 400 with the message '400 Bad Request, invalid data type!' if passed an invalid skill_id", async () => {
+            const response = await request(app)
+            .delete("/api/skills/thisIsAstring")
+            .expect(400)
+            const{ body }= response
+            const { msg } = body;
+            expect(msg).toBe("400 Bad Request, invalid data type!");
+        });
+    })
 })
