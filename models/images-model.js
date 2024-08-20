@@ -18,14 +18,14 @@ exports.fetchImageById = async (image_id) => {
        
         const image = result.rows;
 
-        if (image.length === 0) return Promise.reject({status: 404, msg: 'Not Found, image_id does not exist!'})
+        if (image.length === 0) return Promise.reject({status: 404, msg: '404 Not Found, image_id does not exist!'})
         else return image
 };
 
 exports.createImage = async (body) => {
     const {image_url, alt_text} = body
     
-    if (Object.keys(body).length === 2 && image_url && alt_text) {
+    if (image_url && alt_text) {
         const result = await db.query(`
             INSERT INTO images (image_url, alt_text)
             VALUES($1, $2)
@@ -33,10 +33,10 @@ exports.createImage = async (body) => {
             `, [image_url, alt_text])
 
         return result.rows[0]
-    } else if (Object.keys(body).length > 2 || (Object.keys(body).length === 1 && (!image_url && !alt_text))) {
-        return Promise.reject({status: 400, msg: 'Bad request, incorrect data sent, only include image_url and alt_text!'})
+    // } else if (Object.keys(body).length > 2 || (Object.keys(body).length === 1 && (!image_url && !alt_text))) {
+    //     return Promise.reject({status: 400, msg: '400 Bad request, incorrect data sent, only include image_url and alt_text!'})
     } else {
-        return Promise.reject({status: 400, msg: "Bad request, both image_url and alt_text are needed!"})
+        return Promise.reject({status: 400, msg: "400 Bad request, both image_url and alt_text are needed!"})
     }
 }
 
@@ -45,7 +45,7 @@ exports.updateImage = async (body, image_id) => {
     const {image_url, alt_text} = body
 
     if (!image_url && !alt_text) {
-        return Promise.reject({status: 400, msg: 'Bad request, must include both or either image_url and alt_text!'})
+        return Promise.reject({status: 400, msg: '400 Bad request, must include both or either image_url and alt_text!'})
     }
    
     let setString = ``
