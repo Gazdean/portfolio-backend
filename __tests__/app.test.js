@@ -286,7 +286,23 @@ describe('IMAGES', () => {
             const { msg } = body;
             expect(msg).toBe("400 Bad Request, invalid data type!");
         });
+        it('sets any skills image_id that has the deleted image_id as a foreign key to null', async () => {
+            const response = await request(app)
+            .delete('/api/images/7')
+            .expect(204)
+            const checkImageDeleted= await request(app)
+            .get('/api/images/7')
+            .expect(404)
+            const {msg} = checkImageDeleted.body
+            expect(msg).toBe('404 Not Found, image_id does not exist!')
+            const checkSkillImageId = await request(app)
+            .get('/api/skills/4')
+            .expect(200)
+            const {skill} = checkSkillImageId.body
+            expect(skill[0].image_id).toBe(null);
+        })
     })
+
 })
 
 describe('SKILLS', () => {

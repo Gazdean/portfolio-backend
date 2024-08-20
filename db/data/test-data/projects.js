@@ -18,7 +18,7 @@ module.exports = [
     {
       title: "NC-News Backend Project",
       description: "A backend API Project using Postgres, Sql and render to go live. The API has several endpoints which allows the developer to fetch articles by user aswell as topic. it also allows the developer the ability to post comments and votes",
-      image_id: 7,
+      image_id: 1,
       github_url: "https://github.com/Gazdean/be-nc1-news1",
       live_project_url: "https://newsflash-e6p1.onrender.com/api",
       show: false
