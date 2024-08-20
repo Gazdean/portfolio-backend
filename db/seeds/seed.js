@@ -26,7 +26,7 @@ const seed = async ({imagesData, skillsData, projectsData, galleryData}) => {
         icon_class VARCHAR(50),
         icon_color VARCHAR(20),
         icon_background_color VARCHAR(20),
-        image_id INT REFERENCES images(image_id)
+        image_id INT REFERENCES images(image_id) ON DELETE SET NULL
       );
       `)
     await db.query(`
