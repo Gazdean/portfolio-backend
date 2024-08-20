@@ -1,5 +1,6 @@
 exports.handleCustomErrors = (err, req, res, next) => {
   // console.log('im here in the custom error controller')
+  // console.log(err)
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
   } else {
@@ -11,11 +12,12 @@ exports.handlePsqlErrors = (err, req, res, next) => {
   // console.log('im here in the PSQL error controller')
   // console.log(err)
   if (err.code === "22P02") {
-    res.status(404).send({ msg: "Bad Request, invalid data type!" });
+    res.status(400).send({ msg: "400 Bad Request, invalid data type!" });
   } else next(err);
 };
 
 exports.handleInternalErrors = (err, req, res, next) => {
   // console.log('im here in the internal error controller')
-  res.status(500).send({ msg: "Internal Server Error!" });
+  // console.log(err)
+  res.status(500).send({ msg: "500 Internal Server Error!" });
 };

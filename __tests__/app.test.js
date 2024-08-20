@@ -10,7 +10,7 @@ const { fetchAllSkills } = require('../models/skills-model.js');
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
-describe('images', () => {
+describe('IMAGES', () => {
     // GET all images
     describe('GET/api/images', () => {
         it('responds with status code 200 and body with a key of images', async () => {
@@ -86,24 +86,24 @@ describe('images', () => {
             expect(image.image_url).toBe('./Assets/Images/Gallery-images/northcoders.jpg');
             expect(image.alt_text).toBe('Gareth and members of his Northcoders final project team');          
         });  
-        it("returns a status code 404 with the message 'Not Found, image_id does not exist!' if passed a valid but non existant image_id", async () => {
+        it("returns a status code 404 with the message '404 Not Found, image_id does not exist!' if passed a valid but non existant image_id", async () => {
             const response = await request(app)
             .get("/api/images/200")
             .expect(404)
             const{ body }= response
             const { msg } = body;
-            expect(msg).toBe("Not Found, image_id does not exist!");
+            expect(msg).toBe("404 Not Found, image_id does not exist!");
         });
-        it("returns a status code 404 with the message 'Bad Request, invalid data type!' if passed an invalid image_id", async () => {
+        it("returns a status code 404 with the message '400 Bad Request, invalid data type!' if passed an invalid image_id", async () => {
             const response = await request(app)
             .get("/api/images/thisIsAstring")
-            .expect(404)
+            .expect(400)
             const{ body }= response
             const { msg } = body;
-            expect(msg).toBe("Bad Request, invalid data type!");
+            expect(msg).toBe("400 Bad Request, invalid data type!");
         });
     })
-
+    // POST an image
     describe('POST/api/images', () => {
         it('returns a status code 201, and the created image object if successful', async () => {
             const response = await request(app)
@@ -119,48 +119,54 @@ describe('images', () => {
                 alt_text: "This is a new image"
             });
         })
-        it('returns a status code 400 with the message "Bad request, both image_url and alt_text are needed!", if the client only sends the image_url data', async () => {
+        it('returns a status code 400 with the message "400 Bad request, both image_url and alt_text are needed!", if the client only sends the image_url data', async () => {
             const response = await request(app)
             .post('/api/images')
             .send({image_url: "./Assets/Images/Project-images/new-image.png"})
             .expect(400)
             const {msg} = response.body
-            expect(msg).toBe('Bad request, both image_url and alt_text are needed!')
+            expect(msg).toBe('400 Bad request, both image_url and alt_text are needed!')
         })
-        it('returns a status code 400 with the message "Bad request, both image_url and alt_text are needed!", if the client only sends alt_text data', async () => {
+        it('returns a status code 400 with the message "400 Bad request, both image_url and alt_text are needed!", if the client only sends alt_text data', async () => {
             const response = await request(app)
             .post('/api/images')
             .send({alt_text: "This is a new image"})
             .expect(400)
             const {msg} = response.body
-            expect(msg).toBe('Bad request, both image_url and alt_text are needed!')
+            expect(msg).toBe('400 Bad request, both image_url and alt_text are needed!')
         })
-        it('returns a status code 400 with the message "Bad request, both image_url and alt_text are needed!", if the client sends an empty object', async () => {
+        it('returns a status code 400 with the message "400 Bad request, both image_url and alt_text are needed!", if the client sends an empty object', async () => {
             const response = await request(app)
             .post('/api/images')
             .send({})
             .expect(400)
             const {msg} = response.body
-            expect(msg).toBe('Bad request, both image_url and alt_text are needed!')
+            expect(msg).toBe('400 Bad request, both image_url and alt_text are needed!')
         })
-        it('returns a status code 400 with the message "Bad request, incorrect data sent, only include image_url and alt_text!", if the client sends data other than the image_url and alt_text data', async () => {
+        it('returns a status code 201 and the created image object, if the client sends the image_url and alt_text data, any other data is ignored', async () => {
             const response = await request(app)
             .post('/api/images')
-            .send({image_url: "./Assets/Images/Project-images/new-image.png", alt_text: "This is a new image", number: 7})
-            .expect(400)
-            const {msg} = response.body
-            expect(msg).toBe('Bad request, incorrect data sent, only include image_url and alt_text!')
+            .send({image_url: "./Assets/Images/Project-images/new-image.png", alt_text: "This is a new image again", number: 7})
+            .expect(201)
+            const {image} = response.body
+            expect(typeof image).toBe('object');
+            expect(Object.keys(image).length).toBe(3)
+            expect(image).toMatchObject({
+                image_id: 8,
+                image_url: "./Assets/Images/Project-images/new-image.png",
+                alt_text: "This is a new image again"
+            });
         })
-        it('returns a status code 400 with the message "Bad request, incorrect data sent, only include image_url and alt_text!", if the client sends data other than the image_url and alt_text data', async () => {
+        it('returns a status code 400 with the message "400 Bad request, both image_url and alt_text are needed!", if the client sends data other than the image_url and alt_text data', async () => {
             const response = await request(app)
             .post('/api/images')
             .send({image_url: "./Assets/Images/Project-images/new-image.png", number: 7})
             .expect(400)
             const {msg} = response.body
-            expect(msg).toBe('Bad request, both image_url and alt_text are needed!')
+            expect(msg).toBe('400 Bad request, both image_url and alt_text are needed!')
         })
     })
-
+    // UPDATE an image
     describe('PATCH/api/images/:image_id', () => {   
         it('returns a status code 201 and the updated image object when the client updates the image_url by image id', async () => {
             const response = await request(app)
@@ -211,48 +217,48 @@ describe('images', () => {
             })
             expect(image.wrong).toBe(undefined)
         })
-        it('returns a status code 404 and the message "image id does not exist!" if the client uses a valid but non existant image id', async () => {
+        it('returns a status code 404 and the message "404 Not Found, image_id does not exist!" if the client uses a valid but non existant image id', async () => {
             const response = await request(app)
             .patch('/api/images/200')
             .send({image_url: 'updated_image_url', alt_text: 'updated alt text'})
             .expect(404)
             const {msg} = response.body
-            expect(msg).toBe('Not Found, image_id does not exist!')
+            expect(msg).toBe('404 Not Found, image_id does not exist!')
         })
-        it('returns a status code 400 and the message "Bad request, must include both or either image_url and alt_text!" if the client uses a sends a body of length 2 with 2 incorrect keys', async () => {
+        it('returns a status code 400 and the message "400 Bad request, must include both or either image_url and alt_text!" if the client uses a sends a body of length 2 with 2 incorrect keys', async () => {
             const response = await request(app)
             .patch('/api/images/2')
             .send({wrong: 'updated_image_url', dont: 'updated alt text'})
             .expect(400)
             const {msg} = response.body
-            expect(msg).toBe('Bad request, must include both or either image_url and alt_text!')
+            expect(msg).toBe('400 Bad request, must include both or either image_url and alt_text!')
         })
-        it('returns a status code 400 and the message "Bad request, must include both or either image_url and alt_text!" if the client uses a sends a body of length 1 with 1 incorrect key', async () => {
+        it('returns a status code 400 and the message "400 Bad request, must include both or either image_url and alt_text!" if the client uses a sends a body of length 1 with 1 incorrect key', async () => {
             const response = await request(app)
             .patch('/api/images/2')
             .send({wrong: 'updated_image_url'})
             .expect(400)
             const {msg} = response.body
-            expect(msg).toBe('Bad request, must include both or either image_url and alt_text!')
+            expect(msg).toBe('400 Bad request, must include both or either image_url and alt_text!')
         })
-        it("returns a status code 404 with the message 'Not Found, image_id does not exist!' if passed a valid but non existant image_id", async () => {
+        it("returns a status code 404 with the message '404 Not Found, image_id does not exist!' if passed a valid but non existant image_id", async () => {
             const response = await request(app)
             .patch("/api/images/200")
             .expect(404)
             const{ body }= response
             const { msg } = body;
-            expect(msg).toBe("Not Found, image_id does not exist!");
+            expect(msg).toBe("404 Not Found, image_id does not exist!");
         });
-        it("returns a status code 404 with the message 'Bad Request, invalid data type!' if passed an invalid image_id", async () => {
+        it("returns a status code 400 with the message '400 Bad Request, invalid data type!' if passed an invalid image_id", async () => {
             const response = await request(app)
             .patch("/api/images/thisIsAstring")
-            .expect(404)
+            .expect(400)
             const{ body }= response
             const { msg } = body;
-            expect(msg).toBe("Bad Request, invalid data type!");
+            expect(msg).toBe("400 Bad Request, invalid data type!");
         });
     })
-
+    // DELETE an image by image_id
     describe('DELETE/api/images/:image_id', () => {
         it('returns a status code of 204 if the delete was successful', async () => {
             const response = await request(app)
@@ -262,28 +268,28 @@ describe('images', () => {
             .get('/api/images/2')
             .expect(404)
             const {msg} = checkResponse.body
-            expect(msg).toBe('Not Found, image_id does not exist!')
+            expect(msg).toBe('404 Not Found, image_id does not exist!')
         })
-        it("returns a status code 404 with the message 'Not Found, image_id does not exist!' if passed a valid but non existant image_id", async () => {
+        it("returns a status code 404 with the message '404 Not Found, image_id does not exist!' if passed a valid but non existant image_id", async () => {
             const response = await request(app)
             .delete("/api/images/200")
             .expect(404)
             const{ body }= response
             const { msg } = body;
-            expect(msg).toBe("Not Found, image_id does not exist!");
+            expect(msg).toBe("404 Not Found, image_id does not exist!");
         });
-        it("returns a status code 404 with the message 'Bad Request, invalid data type!' if passed an invalid image_id", async () => {
+        it("returns a status code 400 with the message '400 Bad Request, invalid data type!' if passed an invalid image_id", async () => {
             const response = await request(app)
             .delete("/api/images/thisIsAstring")
-            .expect(404)
+            .expect(400)
             const{ body }= response
             const { msg } = body;
-            expect(msg).toBe("Bad Request, invalid data type!");
+            expect(msg).toBe("400 Bad Request, invalid data type!");
         });
     })
 })
 
-describe('skills', () => {
+describe('SKILLS', () => {
     describe('GET/api/skills', () => {
         it('responds with status code 200 and body with a key of skills', async () => {
             const response = await request(app)
@@ -298,7 +304,6 @@ describe('skills', () => {
             .expect(200)
             const {body} = response
             const {skills} = body
-            console.log('in tests', skills)
             expect(Array.isArray(skills)).toBe(true);
             expect(skills.length).toBe(10);
         });
@@ -311,7 +316,7 @@ describe('skills', () => {
             skills.forEach(skill => {
                 const skillKeys = Object.keys(skill)
                 expect(typeof skill).toBe('object');
-                expect(skillKeys.length).toBeLessThanOrEqual(6);
+                expect(skillKeys.length).toBe(6);
                 expect(typeof skill.skill_id).toBe('number')
                 expect(skill.skill_id).not.toBe(undefined)
                 expect(typeof skill.title).toBe('string')
@@ -332,4 +337,306 @@ describe('skills', () => {
             db.query.mockRestore();
         }); 
     })
+
+    describe('GET/api/skills/:skill_id', () => {
+        it('responds with status code 200 and body with a key of skill', async () => {
+            const response = await request(app)
+            .get('/api/skills/1')
+            .expect(200)
+            const {body} = response
+            expect(body.hasOwnProperty('skill')).toBe(true)
+        });
+        it('responds with status code 200 and skill array of length 1', async () => {
+            const response = await request(app)
+            .get('/api/skills/1')
+            .expect(200)
+            const {body} = response
+            const {skill} = body
+            expect(Array.isArray(skill)).toBe(true);
+            expect(skill.length).toBe(1);
+        });
+        it('responds with status code 200 and the skill array object to be an object, with at least 2 keys title and skill_id', async () => {
+            const response = await request(app)
+            .get('/api/skills/2')
+            .expect(200)
+            const {body} = response
+            const skill = body.skill[0]
+            const keyArr = Object.keys(skill)
+            expect(typeof skill).toBe('object');
+            expect(keyArr.length).toBe(6);
+            expect(skill.skill_id).toBe(2);
+            expect(skill.title).toBe('CSS 3');
+            expect(skill.icon_class).toBe('fa-brands fa-css3');          
+            expect(skill.icon_background_color).toBe('blue');       
+            expect(skill.icon_color).toBe(null);       
+            expect(skill.image_id).toBe(null);       
+        });  
+        it("returns a status code 404 with the message '404 Not Found, skill_id does not exist!' if passed a valid but non existant skill_id", async () => {
+            const response = await request(app)
+            .get("/api/skills/200")
+            .expect(404)
+            const{ body }= response
+            const { msg } = body;
+            expect(msg).toBe("404 Not Found, skill_id does not exist!");
+        });
+        it("returns a status code 404 with the message '400 Bad Request, invalid data type!' if passed an invalid skill_id", async () => {
+            const response = await request(app)
+            .get("/api/skills/thisIsAstring")
+            .expect(400)
+            const{ body }= response
+            const { msg } = body;
+            expect(msg).toBe("400 Bad Request, invalid data type!");
+        });
+    })
+
+    describe('POST/api/skills', () => {
+        it('returns a status code 201, and the created skill object if successful when sent all of the data fields', async () => {
+            const response = await request(app)
+            .post('/api/skills')
+            .send({
+                title: "My new skill", 
+                icon_class: 'New icon',
+                image_id: 4,
+                icon_background_color:"black",
+                icon_color: 'blue' 
+            })
+            .expect(201)
+            const {skill} = response.body
+            expect(typeof skill).toBe('object');
+            expect(Object.keys(skill).length).toBe(6)
+            expect(skill).toMatchObject({
+                skill_id: 11,
+                title: "My new skill",
+                icon_class: "New icon",
+                image_id: 4,
+                icon_background_color:"black",
+                icon_color: 'blue'
+            });
+        })
+        it('returns a status code 201, and the created skill object if successful when sent some of the data fields', async () => {
+            const response = await request(app)
+            .post('/api/skills')
+            .send({
+                title: "My new skill", 
+                icon_class: 'New icon',
+                image_id: 4,
+ 
+            })
+            .expect(201)
+            const {skill} = response.body
+            expect(typeof skill).toBe('object');
+            expect(Object.keys(skill).length).toBe(6)
+            expect(skill).toMatchObject({
+                skill_id: 11,
+                title: "My new skill",
+                icon_class: "New icon",
+                image_id: 4,
+                icon_background_color: null,
+                icon_color: null
+            });
+        })
+        it('returns a status code 201, and the created skill object if successful when sent just the title', async () => {
+            const response = await request(app)
+            .post('/api/skills')
+            .send({
+                title: "My new skill"
+            })
+            .expect(201)
+            const {skill} = response.body
+            expect(typeof skill).toBe('object');
+            expect(Object.keys(skill).length).toBe(6)
+            expect(skill).toMatchObject({
+                skill_id: 11,
+                title: "My new skill",
+                icon_class: null,
+                image_id: null,
+                icon_background_color: null,
+                icon_color: null
+            });
+        })
+        it('returns a status code 201, with the created object if sent a title and any incorrect data is ignored', async () => {
+            const response = await request(app)
+            .post('/api/skills')
+            .send({
+                title: 'Ignore other data',
+                wrong_data: 3000
+            })
+            .expect(201)
+            .expect(201)
+            const {skill} = response.body
+            const skillKeys = Object.keys(skill)
+            expect(typeof skill).toBe('object');
+            expect(skillKeys.length).toBe(6)
+            expect(skillKeys.includes('wrong_data')).toBe(false)
+            expect(skill).toMatchObject({
+                skill_id: 11,
+                title: "Ignore other data",
+                icon_class: null,
+                image_id: null,
+                icon_background_color: null,
+                icon_color: null
+            });
+        })
+        it('returns a status code 400 with the message "400 Bad request, a title is required!", if the client doesnt send title', async () => {
+            const response = await request(app)
+            .post('/api/skills')
+            .send({
+                icon_class: 'New icon',
+                image_id: 4,
+            })
+            .expect(400)
+            const {msg} = response.body
+            expect(msg).toBe('400 Bad request, a title is required!')
+        })
+        it('returns a status code 400 with the message "400 Bad request, a title is required!", if the client sends an empty object', async () => {
+            const response = await request(app)
+            .post('/api/skills')
+            .send({})
+            .expect(400)
+            const {msg} = response.body
+            expect(msg).toBe('400 Bad request, a title is required!')
+        })
+        it('returns a status code 400, with the message "400 Bad request, a title is required!" if sent no title but only incorrect data', async () => {
+            const response = await request(app)
+            .post('/api/skills')
+            .send({alt_text: "This is a new image"})
+            .expect(400)
+            const {msg} = response.body
+            expect(msg).toBe('400 Bad request, a title is required!')
+        })
+    })
+
+    describe('PATCH/api/skills/:skill_id', () => {   
+        it('returns a status code 201 and the updated skill object when the client updates the all allowed data by skill id', async () => {
+            const response = await request(app)
+            .patch('/api/skills/1')
+            .send({
+                title: "My updated title", 
+                icon_class: 'Updated icon',
+                image_id: 2,
+                icon_background_color:"red",
+                icon_color: 'white' 
+            })
+            .expect(201)
+            const {skill} = response.body
+            expect(typeof skill).toBe('object');
+            expect(Object.keys(skill).length).toBe(6)
+            expect(skill).toMatchObject({
+                skill_id: 1,
+                title: "My updated title",
+                icon_class: "Updated icon",
+                image_id: 2, 
+                icon_background_color:"red",
+                icon_color: 'white'
+            });
+        })
+        it('returns a status code 201 and the updated skill object when the client updates the some of the data by image id', async () => {
+            const response = await request(app)
+            .patch('/api/skills/2')
+            .send({
+                title: "My updated title", 
+                icon_class: 'Updated icon',
+                image_id: 2 
+            })
+            .expect(201)
+            const {skill} = response.body
+            expect(skill).toMatchObject({
+                skill_id: 2,
+                title: "My updated title",
+                icon_class: "Updated icon",
+                image_id: 2, 
+                icon_background_color:"blue",
+                icon_color: null            
+            })
+        })
+        it('returns status code 201 and the updated object but only updates the image object with valid keys, it ignores invalid data', async () => {
+            const response = await request(app)
+            .patch('/api/skills/1')
+            .send({
+                title: "My updated title", 
+                icon: 'Updated icon',
+                image_id: 2,
+                color:"red",
+                icon_color: 'white' 
+            })
+            .expect(201)
+            const {skill} = response.body
+            expect(skill).toMatchObject({
+                skill_id: 1,
+                icon_class: "fa-brands fa-html5",
+                icon_background_color:"#e34c26",
+                title: "My updated title", 
+                image_id: 2,
+                icon_color: 'white'            
+            })
+        })
+        it('returns status code 201 and the updated skill object without the title being updated if the client sends the title as an empty string, along with other data', async () => {
+            const response = await request(app)
+            .patch('/api/skills/3')
+            .send({
+                title: '', 
+                image_id: 3,
+                icon_color: 'blue'
+            })
+            .expect(400)
+            const {msg} = response.body
+            expect(msg).toBe("400 Bad Request, title cannot be an empty string!")
+        })
+        it('returns status code 400 and the the message "400 Bad Request, title cannot be an empty string!" if just an empty title is sent', async () => {
+            const response = await request(app)
+            .patch('/api/skills/3')
+            .send({
+                title: '', 
+            })
+            .expect(400)
+            const {msg} = response.body
+            expect(msg).toBe("400 Bad Request, title cannot be an empty string!")
+        })
+        it("returns a status code 404 with the message '400 Bad Request, invalid data type!' if passed an invalid image_id", async () => {
+            const response = await request(app)
+            .patch('/api/skills/2')
+            .send({image_id: 'wrong data type'})
+            .expect(400)
+            const{ body }= response
+            const { msg } = body;
+            expect(msg).toBe("400 Bad Request, invalid data type!");
+        });
+        it('returns a status code 400 and the message "400 Bad request, must include both valid data!" if the client uses a sends a body of length 0', async () => {
+            const response = await request(app)
+            .patch('/api/skills/2')
+            .send({})
+            .expect(400)
+            const {msg} = response.body
+            expect(msg).toBe("400 Bad Request, no data sent!")
+        })
+    })
+    // // DELETE an image by image_id
+    // describe('DELETE/api/images/:image_id', () => {
+    //     it('returns a status code of 204 if the delete was successful', async () => {
+    //         const response = await request(app)
+    //         .delete('/api/images/2')
+    //         .expect(204)
+    //         const checkResponse = await request(app)
+    //         .get('/api/images/2')
+    //         .expect(404)
+    //         const {msg} = checkResponse.body
+    //         expect(msg).toBe('404 Not Found, image_id does not exist!')
+    //     })
+    //     it("returns a status code 404 with the message '404 Not Found, image_id does not exist!' if passed a valid but non existant image_id", async () => {
+    //         const response = await request(app)
+    //         .delete("/api/images/200")
+    //         .expect(404)
+    //         const{ body }= response
+    //         const { msg } = body;
+    //         expect(msg).toBe("404 Not Found, image_id does not exist!");
+    //     });
+    //     it("returns a status code 400 with the message '400 Bad Request, invalid data type!' if passed an invalid image_id", async () => {
+    //         const response = await request(app)
+    //         .delete("/api/images/thisIsAstring")
+    //         .expect(400)
+    //         const{ body }= response
+    //         const { msg } = body;
+    //         expect(msg).toBe("400 Bad Request, invalid data type!");
+    //     });
+    // })
 })
