@@ -77,11 +77,11 @@ exports.updateSkill = async (body, skill_id) => {
     }
 }
 
-// exports.removeImageById = async (image_id) => {
-// const image = await this.fetchImageById(image_id)
-// const result = await db.query(`
-//     DELETE FROM images
-//     WHERE image_id = $1;
-//   `, [image_id])
-// return
-// }
+exports.removeSkillById = async (skill_id) => {
+const skill = await this.fetchSkillById(skill_id)
+const result = await db.query(`
+    DELETE FROM skills
+    WHERE skill_id = $1;
+  `, [skill_id])
+return
+}

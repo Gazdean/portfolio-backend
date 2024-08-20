@@ -2,7 +2,8 @@ const {
   fetchAllSkills,
   fetchSkillById,
   createSkill,
-  updateSkill
+  updateSkill,
+  removeSkillById
 } = require("../models/skills-model.js");
 
 exports.getAllSkills = async (req, res, next) => {
@@ -45,12 +46,12 @@ exports.patchSkill = async (req, res, next) => {
   }
 };
 
-// exports.deleteImageById = async (req, res, next) => {
-//     const {image_id} =req.params
-//     try {
-//         await removeImageById(image_id)
-//         res.status(204).send({});
-//     } catch (error) {
-//         next(error)
-//     }
-// }
+exports.deleteSkillById = async (req, res, next) => {
+    const {skill_id} =req.params
+    try {
+        await removeSkillById(skill_id)
+        res.status(204).send({});
+    } catch (error) {
+        next(error)
+    }
+}
