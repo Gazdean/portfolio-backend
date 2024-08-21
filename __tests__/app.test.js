@@ -627,10 +627,10 @@ describe('SKILLS', () => {
     })
     describe('DELETE/api/skills/:skill_id', () => {
         it('returns a status code of 204 if the delete was successful', async () => {
+            // delete skill
             const response = await request(app)
             .delete('/api/skills/2')
             .expect(204)
-
             // check skill has been deleted
             const checkResponse = await request(app)
             .get('/api/skills/2')

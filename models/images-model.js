@@ -33,8 +33,6 @@ exports.createImage = async (body) => {
             `, [image_url, alt_text])
 
         return result.rows[0]
-    // } else if (Object.keys(body).length > 2 || (Object.keys(body).length === 1 && (!image_url && !alt_text))) {
-    //     return Promise.reject({status: 400, msg: '400 Bad request, incorrect data sent, only include image_url and alt_text!'})
     } else {
         return Promise.reject({status: 400, msg: "400 Bad request, both image_url and alt_text are needed!"})
     }
