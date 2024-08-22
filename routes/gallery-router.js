@@ -1,11 +1,11 @@
 const galleryRouter = require('express').Router()
 
-const {getAllGallery/*, getGalleryById, postGallery, patchGallery, deleteGalleryById*/} = require('../controllers/gallery-controller.js')
+const {getAllGalleryItems, getGalleryItemById, postGalleryItem/*, patchGalleryItem, deleteGalleryItemById*/} = require('../controllers/gallery-controller.js')
 
-galleryRouter.get('/', getAllGallery)
-// galleryRouter.get('/:gallery_id', getGalleryById)
-// galleryRouter.post('/', postGallery)
-// galleryRouter.patch('/:gallery_id', patchGallery)
-// galleryRouter.delete('/:gallery_id', deleteGalleryById)
+galleryRouter.get('/', getAllGalleryItems)
+galleryRouter.get('/:gallery_item_id', getGalleryItemById)
+galleryRouter.post('/', postGalleryItem)
+// galleryRouter.patch('/:gallery_item_id', patchGalleryItem)
+// galleryRouter.delete('/:gallery_item_id', deleteGalleryItemById)
 
 module.exports= galleryRouter

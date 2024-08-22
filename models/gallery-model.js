@@ -1,42 +1,41 @@
 const db = require("../db/connection.js");
 
-exports.fetchAllImages = async () => {
-        const result = await db.query(`SELECT * FROM images;`);
-        const images = result.rows;
-        if (images.length === 0) {
-            return Promise.reject ({ status: 200, msg: 'No images available' });
+exports.fetchAllGalleryItems = async () => {
+        const result = await db.query(`SELECT * FROM gallery;`);
+        const gallery = result.rows;
+        if (gallery.length === 0) {
+            return Promise.reject ({ status: 200, msg: 'Gallery is empty!' });
         } else {
-            return images;
+            return gallery
         }
 };
 
-// exports.fetchImageById = async (image_id) => {
-//         const result = await db.query(`
-//             SELECT * FROM images
-//             WHERE image_id=$1;
-//         `,[image_id]);
+exports.fetchGalleryItemById = async (gallery_item_id) => {
+        const result = await db.query(`
+            SELECT * FROM gallery
+            WHERE gallery_item_id=$1;
+        `,[gallery_item_id]);
        
-//         const image = result.rows;
+        const galleryItem = result.rows;
 
-//         if (image.length === 0) return Promise.reject({status: 404, msg: '404 Not Found, image_id does not exist!'})
-//         else return image
-// };
+        if (galleryItem.length === 0) return Promise.reject({status: 404, msg: '404 Not Found, gallery_item_id does not exist!'})
+        else return galleryItem
+};
 
-// exports.createImage = async (body) => {
-//     const {image_url, alt_text} = body
+exports.createGalleryItem = async (body) => {
+    const {title, description, image_id} = body
     
-//     if (image_url && alt_text) {
-//         const result = await db.query(`
-//             INSERT INTO images (image_url, alt_text)
-//             VALUES($1, $2)
-//             RETURNING *;
-//             `, [image_url, alt_text])
-
-//         return result.rows[0]
-//     } else {
-//         return Promise.reject({status: 400, msg: "400 Bad request, both image_url and alt_text are needed!"})
-//     }
-// }
+    if (title && image_id) {
+        const result = await db.query(`
+            INSERT INTO gallery (title, description, image_id)
+            VALUES($1, $2, $3)
+            RETURNING *;
+            `, [title, description, image_id])
+        return result.rows[0]
+    } else {
+        return Promise.reject({status: 400, msg: "400 Bad request, both a title and image_id are required!"})
+    }
+}
 
 // exports.updateImage = async (body, image_id) => {
 //     const existingImage = await this.fetchImageById(image_id)
