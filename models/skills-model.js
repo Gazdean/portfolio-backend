@@ -18,7 +18,7 @@ exports.fetchSkillById = async (skill_id) => {
    
     const skill = result.rows;
     if (skill.length === 0) return Promise.reject({status: 404, msg: '404 Not Found, skill_id does not exist!'})
-    else return skill
+    else return skill[0]
 };
 
 exports.createSkill = async (body) => {

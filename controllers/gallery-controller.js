@@ -1,4 +1,4 @@
-const {fetchAllGalleryItems, fetchGalleryItemById, createGalleryItem/*, updateGalleryItemById, removeGalleryItemById*/} = require('../models/gallery-model.js')
+const {fetchAllGalleryItems, fetchGalleryItemById, createGalleryItem, updateGalleryItemById, removeGalleryItemById} = require('../models/gallery-model.js')
 
 exports.getAllGalleryItems = async (req, res, next) => {
     try {
@@ -30,23 +30,24 @@ exports.postGalleryItem = async (req, res, next) => {
     }
 }
 
-// exports.patchImage = async (req, res, next) => {
-//     const {body} = req
-//     const {image_id} =req.params
-//     try {
-//         const updatedImage = await updateImage(body, image_id)
-//         res.status(201).send({ image: updatedImage });
-//     } catch (error) {
-//         next(error)
-//     }
-// }
+exports.patchGalleryItemById = async (req, res, next) => {
+    const {body} = req
+    const {gallery_item_id} =req.params
+   
+    try {
+        const updatedGalleryItem = await updateGalleryItemById(body, gallery_item_id)
+        res.status(201).send({ galleryItem: updatedGalleryItem });
+    } catch (error) {
+        next(error)
+    }
+}
 
-// exports.deleteImageById = async (req, res, next) => {
-//     const {image_id} =req.params
-//     try {
-//         await removeImageById(image_id)
-//         res.status(204).send({});
-//     } catch (error) {
-//         next(error)
-//     }
-// }
+exports.deleteGalleryItemById = async (req, res, next) => {
+    const {gallery_item_id} =req.params
+    try {
+        await removeGalleryItemById(gallery_item_id)
+        res.status(204).send({});
+    } catch (error) {
+        next(error)
+    }
+}

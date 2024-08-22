@@ -19,7 +19,7 @@ exports.fetchGalleryItemById = async (gallery_item_id) => {
         const galleryItem = result.rows;
 
         if (galleryItem.length === 0) return Promise.reject({status: 404, msg: '404 Not Found, gallery_item_id does not exist!'})
-        else return galleryItem
+        else return galleryItem[0]
 };
 
 exports.createGalleryItem = async (body) => {
@@ -37,44 +37,50 @@ exports.createGalleryItem = async (body) => {
     }
 }
 
-// exports.updateImage = async (body, image_id) => {
-//     const existingImage = await this.fetchImageById(image_id)
-//     const {image_url, alt_text} = body
-
-//     if (!image_url && !alt_text) {
-//         return Promise.reject({status: 400, msg: '400 Bad request, must include both or either image_url and alt_text!'})
-//     }
-   
-//     let setString = ``
-//     const dataArr = [image_id]
-//     if (image_url) {
-//         setString += 'image_url = $2'
-//         dataArr.push(image_url)
-//     }
-//     if (!setString.length && alt_text) { 
-//         setString += 'alt_text = $2'
-//         dataArr.push(alt_text)
-//     } else if (setString.length && alt_text) {
-//         setString += ', alt_text = $3'
-//         dataArr.push(alt_text)
-//     }
+exports.updateGalleryItemById = async (body, gallery_item_id) => {
+        if (!Object.keys(body).length){
+            return Promise.reject({status: 400, msg: '400 Bad Request, no data sent!'})
+        }
+        await this.fetchGalleryItemById(gallery_item_id)
+        const {title} = body
+        const greenKeyArr = ['title', 'description', 'show']
+        
+        let setString = ``
     
-//     if (setString) {    
-//         const result = await db.query(`
-//             UPDATE images 
-//             SET ${setString}
-//             WHERE image_id = $1
-//             RETURNING *;
-//             `, dataArr)
-//         return result.rows[0]
-//     }
-// }
+        const dataArr = [gallery_item_id]
+        let count = 2
+    
+        for (const key in body) {
+            if(key === 'title' && typeof title === 'string' && !title.length) return Promise.reject({status: 400, msg: '400 Bad Request, title cannot be an empty string!'})
+            else if (greenKeyArr.includes(key)){
+                dataArr.push(body[key])
+                if (!setString.length) {
+                    setString += `${key} = $${count}`
+                    count ++
+                }
+                else {
+                    setString += `, ${key} = $${count}` 
+                    count ++
+                }
+            }
+        }
+        if (setString) {   
+            const result = await db.query(`
+                UPDATE gallery 
+                SET ${setString}
+                WHERE gallery_item_id = $1
+                RETURNING *;
+                `, dataArr)
+            return result.rows[0]
+        }
+    
+}   
 
-// exports.removeImageById = async (image_id) => {
-//     const image = await this.fetchImageById(image_id)
-//     const result = await db.query(`
-//         DELETE FROM images
-//         WHERE image_id = $1;
-//       `, [image_id])
-//    return
-// }
+exports.removeGalleryItemById = async (gallery_item_id) => {
+    const image = await this.fetchGalleryItemById(gallery_item_id)
+    const result = await db.query(`
+        DELETE FROM gallery
+        WHERE gallery_item_id = $1;
+      `, [gallery_item_id])
+   return
+}

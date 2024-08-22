@@ -19,7 +19,7 @@ exports.fetchImageById = async (image_id) => {
         const image = result.rows;
 
         if (image.length === 0) return Promise.reject({status: 404, msg: '404 Not Found, image_id does not exist!'})
-        else return image
+        else return image[0]
 };
 
 exports.createImage = async (body) => {
