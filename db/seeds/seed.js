@@ -44,7 +44,8 @@ const seed = async ({imagesData, skillsData, projectsData, galleryData}) => {
         gallery_item_id SERIAL PRIMARY KEY,
         title VARCHAR(50) NOT NULL,
         description TEXT,
-        image_id INT REFERENCES images(image_id) ON DELETE CASCADE
+        image_id INT NOT NULL REFERENCES images(image_id) ON DELETE CASCADE,
+        show BOOLEAN DEFAULT true
       );
       `)
     
@@ -75,9 +76,9 @@ const seed = async ({imagesData, skillsData, projectsData, galleryData}) => {
     await  db.query(projectsQueryStr)
 
     const galleryQueryStr = format (`
-      INSERT INTO gallery (title, description, image_id) VALUES %L;`,
-      galleryData.map(({title, description, image_id}) =>
-          [title, description, image_id]
+      INSERT INTO gallery (title, description, image_id, show) VALUES %L;`,
+      galleryData.map(({title, description, image_id, show = true}) =>
+          [title, description, image_id, show]
       )
     )
     await  db.query(galleryQueryStr)
