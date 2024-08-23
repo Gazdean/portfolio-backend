@@ -7,6 +7,7 @@ const db = require("../db/connection.js");
 const { fetchAllImages } = require('../models/images-model.js');
 const { fetchAllSkills } = require('../models/skills-model.js');
 const { fetchAllGalleryItems } = require('../models/gallery-model.js');
+const { fetchAllProjects } = require('../models/projects-model.js');
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -686,6 +687,8 @@ describe('GALLERY', () => {
             });
             db.query.mockRestore();
         }); 
+
+         // TODO get gallery by show = true
     })
 
     describe('GET/api/gallery/:gallery_item_id', () => {
@@ -1067,4 +1070,439 @@ describe('GALLERY', () => {
             expect(msg).toBe("400 Bad Request, invalid data type!");
         });
     })
+})
+
+describe.only('PROJECTS', () => {
+    describe('GET/api/projects', () => {
+        it('responds with status code 200 and body with a key of projects', async () => {
+            const response = await request(app)
+            .get('/api/projects')
+            .expect(200)
+            const {body} = response
+            expect(body.hasOwnProperty('projects')).toBe(true)
+        });
+        it('responds with status code 200 and projects array of length 3', async () => {
+            const response = await request(app)
+            .get('/api/projects')
+            .expect(200)
+            const {body} = response
+            const {projects} = body
+            expect(Array.isArray(projects)).toBe(true);
+            expect(projects.length).toBe(3);
+        });
+        it('responds with status code 200 and the project array elements to be objects and correct data types', async () => {
+            const response = await request(app)
+            .get('/api/projects')
+            .expect(200)
+            const {body} = response
+            const {projects} = body
+            projects.forEach(project => {
+                const projectKeys = Object.keys(project)
+                expect(typeof project).toBe('object');
+                expect(projectKeys.length).toBe(7);
+                expect(typeof project.project_id).toBe('number')
+                expect(project.project_id).not.toBe(undefined)
+                expect(typeof project.title).toBe('string')
+                expect(project.title).not.toBe(undefined)
+                project.description && expect(typeof project.description).toBe('string')
+                expect(typeof project.show).toBe('boolean')
+                expect(project.show).toBe(true)
+                expect(project.position).toBe(null)
+                project.github_url && expect(typeof project.github_url).toBe("string");             
+                project.live_project_url && expect(typeof project.live_project_url).toBe("string"); 
+            }) 
+        });
+        it('should respond with status code 200 and the message "There are no projects!" if there are no project objects available', async () => {
+            jest.spyOn(db, 'query').mockResolvedValueOnce({ rows: [] });
+            await expect(fetchAllProjects()).rejects.toEqual({
+                status: 200,
+                msg: 'There are no projects!'
+            });
+            db.query.mockRestore();
+        }); 
+
+        // TODO get projects by show = true
+    })
+
+    describe.only('GET/api/projects/:project_id', () => {
+        it('responds with status code 200 and body with a key of projects', async () => {
+            const response = await request(app)
+            .get('/api/projects/3')
+            .expect(200)
+            const {body} = response
+            expect(body.hasOwnProperty('project')).toBe(true)
+        });
+        it('responds with status code 200 and the project to be an object', async () => {
+            const response = await request(app)
+            .get('/api/projects/2')
+            .expect(200)
+            const {body} = response
+            const project = body.project
+            const keyArr = Object.keys(project)
+            expect(typeof project).toBe('object');
+            expect(keyArr.length).toBe(7);
+            expect(project.project_id).toBe(2);
+            expect(project.title).toBe("Squircles Game");
+            expect(project.description).toBe("A spatial memory game built with React and styled using Bootstrap. The player is shown 3 squircle shapes which must then be recreated using 3 sliders.  Two game stories are available, a random practice game and a daily game which is the same for all players this uses local storage to keep track of the player's stats ");          
+            expect(project.show).toBe(true);       
+            expect(project.position).toBe(null);             
+            expect(project.github_url).toBe( "https://github.com/OJ423/flush-finder");             
+            expect(project.live_project_url).toBe("https://squirclesgame.com/");             
+        });  
+        // it('responds with status code 200 and the galleryItem array object with description set to null if description is missing from test data', async () => {
+        //     const response = await request(app)
+        //     .get('/api/gallery/3')
+        //     .expect(200)
+        //     const {body} = response
+        //     const galleryItem = body.galleryItem
+        //     expect(galleryItem.description).toBe(null);                      
+        // });
+        // it("returns a status code 404 with the message '404 Not Found, gallery_item_id does not exist!' if passed a valid but non existant gallery_item_id", async () => {
+        //     const response = await request(app)
+        //     .get("/api/gallery/200")
+        //     .expect(404)
+        //     const{ body }= response
+        //     const { msg } = body;
+        //     expect(msg).toBe("404 Not Found, gallery_item_id does not exist!");
+        // });
+        // it("returns a status code 404 with the message '400 Bad Request, invalid data type!' if passed an invalid gallery_item_id", async () => {
+        //     const response = await request(app)
+        //     .get("/api/gallery/thisIsAstring")
+        //     .expect(400)
+        //     const{ body }= response
+        //     const { msg } = body;
+        //     expect(msg).toBe("400 Bad Request, invalid data type!");
+        // });
+    })
+
+//     describe('POST/api/gallery', () => {
+//         it('returns a status code 201, and the created gallery object if successful when sent all of the data fields', async () => {
+//             const response = await request(app)
+//             .post('/api/gallery')
+//             .send({
+//                 title: "My new gallery item", 
+//                 description: 'New description',
+//                 image_id: 3
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 4,
+//                 title: "My new gallery item",
+//                 description: 'New description',
+//                 image_id: 3,
+//                 show: true
+//             });
+//         })
+//         it('returns a status code 201, and the created skill object if successful when sent some of the data fields', async () => {
+//             const response = await request(app)
+//             .post('/api/gallery')
+//             .send({
+//                 title: "My new gallery item", 
+//                 image_id: 3,
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 4,
+//                 title: "My new gallery item",
+//                 description: null,
+//                 image_id: 3,
+//                 show: true
+//             });
+//         })
+//         it('returns a status code 201, with the created object if sent a title and image_id, any incorrect data is ignored', async () => {
+//             const response = await request(app)
+//             .post('/api/gallery')
+//             .send({
+//                 title: "My new gallery item", 
+//                 image_id: 3,
+//                 boolean: true
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 4,
+//                 title: "My new gallery item",
+//                 description: null,
+//                 image_id: 3,
+//                 show: true
+//             });
+//             expect(galleryItem).not.toHaveProperty('boolean')
+//         })
+//         it('returns a status code 400 with the message "400 Bad request, both a title and image_id are required!", if the client doesnt send an image_id', async () => {
+//             const response = await request(app)
+//             .post('/api/gallery')
+//             .send({
+//                 title: "My new gallery item"
+//             })
+//             .expect(400)
+//             const {msg} = response.body
+//             expect(msg).toBe('400 Bad request, both a title and image_id are required!')
+//         })
+//         it('returns a status code 400 with the message "400 Bad request, both a title and image_id are required!", if the client doesnt send a title', async () => {
+//             const response = await request(app)
+//             .post('/api/gallery')
+//             .send({
+//                 image_id: 4
+//             })
+//             .expect(400)
+//             const {msg} = response.body
+//             expect(msg).toBe('400 Bad request, both a title and image_id are required!')
+//         })
+//         it('returns a status code 400 with the message "400 Bad request, both a title and image_id are required!", if the client sends an empty object', async () => {
+//             const response = await request(app)
+//             .post('/api/gallery')
+//             .send({})
+//             .expect(400)
+//             const {msg} = response.body
+//             expect(msg).toBe('400 Bad request, both a title and image_id are required!')
+//         })
+//         it('returns a status code 400, with the message "400 Bad request, both a title and image_id are required!" if sent no title or image_id but only incorrect data', async () => {
+//             const response = await request(app)
+//             .post('/api/gallery')
+//             .send({alt_text: "This is a new image"})
+//             .expect(400)
+//             const {msg} = response.body
+//             expect(msg).toBe("400 Bad request, both a title and image_id are required!")
+//         })
+//     })
+
+//     describe('PATCH/api/skills/:skill_id', () => {   
+//         it('returns a status code 201 and the updated image object when the client updates the all allowed data by gallery_item_id', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/1')
+//             .send({
+//                 title: "My new gallery item",
+//                 description: 'New description',
+//                 show: false   
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 1,
+//                 title: "My new gallery item",
+//                 description: 'New description',
+//                 image_id: 1,
+//                 show: false
+                
+//             });
+//         })
+//         it('returns a status code 201 and the updated skill object when the client updates the description and show by gallery_item_id', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/1')
+//             .send({
+//                 description: 'New description',
+//                 show: false   
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 1,
+//                 title: "Final day at Northcoders, project group",
+//                 description: 'New description',
+//                 image_id: 1,
+//                 show: false
+//             });
+//         })
+//         it('returns a status code 201 and the updated skill object when the client updates the description and title by gallery_item_id', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/1')
+//             .send({
+//                 description: 'New description',
+//                 title: "hey"  
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 1,
+//                 title: "hey",
+//                 description: 'New description',
+//                 image_id: 1,
+//                 show: true
+//             });
+//         })
+//         it('returns a status code 201 and the updated skill object when the client updates the show and title by gallery_item_id', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/1')
+//             .send({
+//                 show: false,
+//                 title: "hey"  
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 1,
+//                 title: "hey",
+//                 description: "My final project group, at the Northcoders offices in manchester just before our  presentations",
+//                 image_id: 1,
+//                 show: false
+//             });
+//         })
+//         it('returns a status code 201 and the updated skill object when the client updates just show by gallery_item_id', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/2')
+//             .send({
+//                 show: false,
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 2,
+//                 title: "At the summit of Mount Blanc",
+//                 description: "At the top of Mount Blanc, after a two day climb with stop offs at the Tête Rousse Hut 3167m, and Goutier hut at 3835m",
+//                 image_id: 2,
+//                 show: false
+//             });
+//         })
+//         it('returns a status code 201 and the updated skill object when the client updates just description by gallery_item_id', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/2')
+//             .send({
+//                 description: 'this'
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 2,
+//                 title: "At the summit of Mount Blanc",
+//                 description: "this",
+//                 image_id: 2,
+//                 show: true
+//             });
+//         })
+//         it('returns a status code 201 and the updated skill object when the client updates just title by gallery_item_id', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/2')
+//             .send({
+//                 title: 'hello'
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 2,
+//                 title: "hello",
+//                 description: "At the top of Mount Blanc, after a two day climb with stop offs at the Tête Rousse Hut 3167m, and Goutier hut at 3835m",
+//                 image_id: 2,
+//                 show: true
+//             });
+//         })
+//         it('returns status code 201 and the updated object but only updates the image object with valid keys, it ignores invalid data', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/1')
+//             .send({
+//                 title: "My new gallery item",
+//                 description: 'New description',
+//                 show: false,
+//                 wrongKey: true
+//             })
+//             .expect(201)
+//             const {galleryItem} = response.body
+//             expect(typeof galleryItem).toBe('object');
+//             expect(Object.keys(galleryItem).length).toBe(5)
+//             expect(galleryItem).not.toHaveProperty('wrongKey')
+//             expect(galleryItem).toMatchObject({
+//                 gallery_item_id: 1,
+//                 title: "My new gallery item",
+//                 description: 'New description',
+//                 image_id: 1,
+//                 show: false  
+//             });
+//         })
+//         it('returns status code 400 and the the message "400 Bad Request, title cannot be an empty string!" if the client sends the title as an empty string', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/2')
+//             .send({
+//                 title: ''
+//             })
+//             .expect(400)
+//             const {msg} = response.body
+//             expect(msg).toBe("400 Bad Request, title cannot be an empty string!")
+//         })
+//         it("returns a status code 400 with the message '400 Bad Request, invalid data type!' if passed an invalid gallery_item_id", async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/wrongdata')
+//             .send({title: 'new title'})
+//             .expect(400)
+//             const{ body }= response
+//             const { msg } = body;
+//             expect(msg).toBe("400 Bad Request, invalid data type!");
+//         });
+//         it("returns a status code 404 with the message '404 Not Found, gallery_item_id does not exist!' if passed an invalid gallery_item_id", async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/400')
+//             .send({title: 'wrong data type'})
+//             .expect(404)
+//             const{ body }= response
+//             const { msg } = body;
+//             expect(msg).toBe("404 Not Found, gallery_item_id does not exist!");
+//         });
+//         it('returns a status code 400 and the message "400 Bad Request, no data sent!" if the client uses a sends a body with no keys', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/2')
+//             .send({})
+//             .expect(400)
+//             const {msg} = response.body
+//             expect(msg).toBe("400 Bad Request, no data sent!")
+//         })
+//         it('returns a status code 400 and the message "400 Bad Request, invalid data type!" if the client uses a sends a show as not a boolean', async () => {
+//             const response = await request(app)
+//             .patch('/api/gallery/2')
+//             .send({show: 2})
+//             .expect(400)
+//             const {msg} = response.body
+//             expect(msg).toBe("400 Bad Request, invalid data type!")
+//         })
+//     })
+
+//     describe('DELETE/api/skills/:skill_id', () => {
+//         it('returns a status code of 204 if the delete was successful', async () => {
+//             //delete gallery item
+//             const response = await request(app)
+//             .delete('/api/gallery/2')
+//             .expect(204)
+//             // check gallery item has been deleted
+//             const checkResponse = await request(app)
+//             .get('/api/gallery/2')
+//             .expect(404)
+//             const {msg} = checkResponse.body
+//             expect(msg).toBe('404 Not Found, gallery_item_id does not exist!')
+//         })
+//         it("returns a status code 404 with the message '404 Not Found, gallery_item_id does not exist!' if passed a valid but non existant gallery_item_id", async () => {
+//             const response = await request(app)
+//             .delete("/api/gallery/200")
+//             .expect(404)
+//             const{ body }= response
+//             const { msg } = body;
+//             expect(msg).toBe("404 Not Found, gallery_item_id does not exist!");
+//         });
+//         it("returns a status code 400 with the message '400 Bad Request, invalid data type!' if passed an invalid gallery_item_id", async () => {
+//             const response = await request(app)
+//             .delete("/api/gallery/thisIsAstring")
+//             .expect(400)
+//             const{ body }= response
+//             const { msg } = body;
+//             expect(msg).toBe("400 Bad Request, invalid data type!");
+//         });
+//     })
 })
