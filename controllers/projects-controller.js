@@ -1,4 +1,4 @@
-const {fetchAllProjects/*, fetchProjectById, createProject, updateProjectById, removeProjectById*/} = require('../models/projects-model.js')
+const {fetchAllProjects, fetchProjectById/*, createProject, updateProjectById, removeProjectById*/} = require('../models/projects-model.js')
 
 exports.getAllProjects = async (req, res, next) => {
     try {
@@ -9,16 +9,16 @@ exports.getAllProjects = async (req, res, next) => {
     }
 };
 
-// exports.getGalleryItemById = async (req, res, next) => {
-//     const {gallery_item_id} = req.params
+exports.getProjectById = async (req, res, next) => {
+    const {project_id} = req.params
     
-//     try {
-//         const galleryItem = await fetchGalleryItemById(gallery_item_id);
-//         res.status(200).send({galleryItem});
-//     } catch (error) {
-//         next(error);
-//     }
-// }
+    try {
+        const project = await fetchProjectById(project_id);
+        res.status(200).send({project});
+    } catch (error) {
+        next(error);
+    }
+}
 
 // exports.postGalleryItem = async (req, res, next) => {
 //     const {body} = req

@@ -1072,7 +1072,7 @@ describe('GALLERY', () => {
     })
 })
 
-describe('PROJECTS', () => {
+describe.only('PROJECTS', () => {
     describe('GET/api/projects', () => {
         it('responds with status code 200 and body with a key of projects', async () => {
             const response = await request(app)
@@ -1097,7 +1097,6 @@ describe('PROJECTS', () => {
             const {body} = response
             const {projects} = body
             projects.forEach(project => {
-                console.log(project)
                 const projectKeys = Object.keys(project)
                 expect(typeof project).toBe('object');
                 expect(projectKeys.length).toBe(7);
@@ -1109,7 +1108,8 @@ describe('PROJECTS', () => {
                 expect(typeof project.show).toBe('boolean')
                 expect(project.show).toBe(true)
                 expect(project.position).toBe(null)
-                
+                project.github_url && expect(typeof project.github_url).toBe("string");             
+                project.live_project_url && expect(typeof project.live_project_url).toBe("string"); 
             }) 
         });
         it('should respond with status code 200 and the message "There are no projects!" if there are no project objects available', async () => {
@@ -1124,29 +1124,31 @@ describe('PROJECTS', () => {
         // TODO get projects by show = true
     })
 
-    describe('GET/api/gallery/:project_id', () => {
-        it('responds with status code 200 and body with a key of galleryItem', async () => {
+    describe.only('GET/api/projects/:project_id', () => {
+        it('responds with status code 200 and body with a key of projects', async () => {
             const response = await request(app)
-            .get('/api/gallery/1')
+            .get('/api/projects/3')
             .expect(200)
             const {body} = response
-            expect(body.hasOwnProperty('galleryItem')).toBe(true)
+            expect(body.hasOwnProperty('project')).toBe(true)
         });
-        // it('responds with status code 200 and the galleryItem array object to be an object', async () => {
-        //     const response = await request(app)
-        //     .get('/api/gallery/2')
-        //     .expect(200)
-        //     const {body} = response
-        //     const galleryItem = body.galleryItem
-        //     const keyArr = Object.keys(galleryItem)
-        //     expect(typeof galleryItem).toBe('object');
-        //     expect(keyArr.length).toBe(5);
-        //     expect(galleryItem.gallery_item_id).toBe(2);
-        //     expect(galleryItem.title).toBe("At the summit of Mount Blanc");
-        //     expect(galleryItem.description).toBe("At the top of Mount Blanc, after a two day climb with stop offs at the Tête Rousse Hut 3167m, and Goutier hut at 3835m",);          
-        //     expect(galleryItem.show).toBe(true);       
-        //     expect(galleryItem.image_id).toBe(2);             
-        // });  
+        it('responds with status code 200 and the project to be an object', async () => {
+            const response = await request(app)
+            .get('/api/projects/2')
+            .expect(200)
+            const {body} = response
+            const project = body.project
+            const keyArr = Object.keys(project)
+            expect(typeof project).toBe('object');
+            expect(keyArr.length).toBe(7);
+            expect(project.project_id).toBe(2);
+            expect(project.title).toBe("Squircles Game");
+            expect(project.description).toBe("A spatial memory game built with React and styled using Bootstrap. The player is shown 3 squircle shapes which must then be recreated using 3 sliders.  Two game stories are available, a random practice game and a daily game which is the same for all players this uses local storage to keep track of the player's stats ");          
+            expect(project.show).toBe(true);       
+            expect(project.position).toBe(null);             
+            expect(project.github_url).toBe( "https://github.com/OJ423/flush-finder");             
+            expect(project.live_project_url).toBe("https://squirclesgame.com/");             
+        });  
         // it('responds with status code 200 and the galleryItem array object with description set to null if description is missing from test data', async () => {
         //     const response = await request(app)
         //     .get('/api/gallery/3')

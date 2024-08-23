@@ -10,17 +10,17 @@ exports.fetchAllProjects = async () => {
         }
 };
 
-// exports.fetchGalleryItemById = async (gallery_item_id) => {
-//         const result = await db.query(`
-//             SELECT * FROM gallery
-//             WHERE gallery_item_id=$1;
-//         `,[gallery_item_id]);
+exports.fetchProjectById = async (project_id) => {
+        const result = await db.query(`
+            SELECT * FROM projects
+            WHERE project_id=$1;
+        `,[project_id]);
        
-//         const galleryItem = result.rows;
+        const project = result.rows;
 
-//         if (galleryItem.length === 0) return Promise.reject({status: 404, msg: '404 Not Found, gallery_item_id does not exist!'})
-//         else return galleryItem[0]
-// };
+        if (project.length === 0) return Promise.reject({status: 404, msg: '404 Not Found, project_id does not exist!'})
+        else return project[0]
+};
 
 // exports.createGalleryItem = async (body) => {
 //     const {title, description, image_id} = body
