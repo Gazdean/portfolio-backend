@@ -1,7 +1,7 @@
 module.exports = [
     {
         image_id: 1,
-        description: "My final project group, at the Northcoders offices in manchester just before our  presentations",
+        description: "My final project group, at the Northcoders offices in manchester just before our presentations",
         title: "Final day at Northcoders, project group",
     },
     {
