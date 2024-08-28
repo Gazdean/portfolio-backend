@@ -36,7 +36,7 @@ const seed = async ({imagesData, skillsData, projectsData, galleryData}) => {
         description TEXT,
         github_url VARCHAR(100),
         live_project_url VARCHAR(100),
-        position INT UNIQUE,
+        position INT,
         show BOOLEAN DEFAULT true
       );
       `)
@@ -69,9 +69,11 @@ const seed = async ({imagesData, skillsData, projectsData, galleryData}) => {
     await  db.query(skillsQueryStr)
 
     const projectsQueryStr = format (`
-      INSERT INTO projects (title, description, github_url, live_project_url) VALUES %L;`,
-      projectsData.map(({title, description, github_url, live_project_url}) =>
-          [title, description, github_url, live_project_url]
+      INSERT INTO projects (title, description, github_url, live_project_url, position) VALUES %L;`,
+      projectsData.map(({title, description, github_url, live_project_url}, index) =>{
+        const position = index + 1
+          return [title, description, github_url, live_project_url, position]
+      }
       )
     )
     await  db.query(projectsQueryStr)
