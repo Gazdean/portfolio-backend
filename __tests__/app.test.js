@@ -1097,6 +1097,7 @@ describe.only('PROJECTS', () => {
             const {body} = response
             const {projects} = body
             projects.forEach(project => {
+                console.log(project)
                 const projectKeys = Object.keys(project)
                 expect(typeof project).toBe('object');
                 expect(projectKeys.length).toBe(7);
@@ -1107,7 +1108,7 @@ describe.only('PROJECTS', () => {
                 project.description && expect(typeof project.description).toBe('string')
                 expect(typeof project.show).toBe('boolean')
                 expect(project.show).toBe(true)
-                expect(project.position).toBe(null)
+                expect(typeof project.position).toBe('number')
                 project.github_url && expect(typeof project.github_url).toBe("string");             
                 project.live_project_url && expect(typeof project.live_project_url).toBe("string"); 
             }) 
@@ -1145,7 +1146,7 @@ describe.only('PROJECTS', () => {
             expect(project.title).toBe("Squircles Game");
             expect(project.description).toBe("A spatial memory game built with React and styled using Bootstrap. The player is shown 3 squircle shapes which must then be recreated using 3 sliders.  Two game stories are available, a random practice game and a daily game which is the same for all players this uses local storage to keep track of the player's stats ");          
             expect(project.show).toBe(true);       
-            expect(project.position).toBe(null);             
+            expect(project.position).toBe(2);             
             expect(project.github_url).toBe( "https://github.com/OJ423/flush-finder");             
             expect(project.live_project_url).toBe("https://squirclesgame.com/");             
         });  
