@@ -1,77 +1,262 @@
 {
-  "GET /api/images": {
-    "description": "serves an array of all images, on a key of images",
-    "queries": [],
-    "send": {}, 
-    "exampleResponse": {
-      "images": [
-        {
-          "image_id": 1,
-          "alt_text": "Gareth and members of his Northcoders final project team",
-          "image_url": "./Assets/Images/Gallery-images/northcoders.jpg"
-        },
-        {
-          "image_id": 2,
-          "alt_text": "Gareth and climbing group at the summit of Mont Blanc",
-          "image_url": "./Assets/Images/Gallery-images/mont-blanc.jpg"
-        }
-      ]
+  "images": {
+    "GET /api/images": {
+      "description": "serves an array of all images, on a key of images",
+      "queries": [],
+      "send": {}, 
+      "exampleResponse": {
+        "images": [
+          {
+            "image_id": 1,
+            "alt_text": "Gareth and members of his Northcoders final project team",
+            "image_url": "./Assets/Images/Gallery-images/northcoders.jpg"
+          },
+          {
+            "image_id": 2,
+            "alt_text": "Gareth and climbing group at the summit of Mont Blanc",
+            "image_url": "./Assets/Images/Gallery-images/mont-blanc.jpg"
+          }
+        ]
+      }
+    },
+
+    "GET /api/images/:image_id": {
+      "description": "serves an object containing the requested image by image_id, on a key of image",
+      "queries": [],
+      "send": {}, 
+      "exampleResponse": {
+        "image":
+          {
+            "image_id": 1,
+            "alt_text": "Gareth and members of his Northcoders final project team",
+            "image_url": "./Assets/Images/Gallery-images/northcoders.jpg"
+          }
+      }
+    },
+
+    "POST /api/images": {
+      "description": "allows the client to create a new image, the client must send both an alt_text(description of the image) and an image_url, the response is the newly created image object on a key of image",
+      "queries": [],
+      "send": {
+        "alt_text": "Gareth and members of his Northcoders final project team",
+        "image_url": "./Assets/Images/Gallery-images/northcoders.jpg"
+      }, 
+      "exampleResponse": {
+        "image":
+          {
+            "image_id": 3,
+            "alt_text": "Gareth and members of his Northcoders final project team",
+            "image_url": "./Assets/Images/Gallery-images/northcoders.jpg"
+          }
+      }
+    },
+
+    "PATCH /api/images/:image_id": {
+      "description": "allows the client to update an image by image_id, the client can update both or one of the alt_text(description of the image) or the image_url, its response is the updated image on a key of image",
+      "queries": [],
+      "send": {
+        "alt_text": "Gareth and members of his Northcoders final project team, northcoders office",
+        "image_url": "./Assets/Images/Gallery-images/northcoders-team.jpg"
+      }, 
+      "exampleResponse": {
+        "image":
+          {
+            "image_id": 3,
+            "alt_text": "Gareth and members of his Northcoders final project team, northcoders office",
+            "image_url": "./Assets/Images/Gallery-images/northcoders-team.jpg"
+          }
+      }
+    },
+
+    "DELETE /api/images/:image_id": {
+      "description": "allows the client to delete an image by image_id",
+      "queries": [],
+      "send": {}, 
+      "exampleResponse": {}
     }
   },
 
-  "GET /api/images/:image_id": {
-    "description": "serves an object containing the requested image by image_id, on a key of image",
-    "queries": [],
-    "send": {}, 
-    "exampleResponse": {
-      "image":
-        {
-          "image_id": 1,
-          "alt_text": "Gareth and members of his Northcoders final project team",
-          "image_url": "./Assets/Images/Gallery-images/northcoders.jpg"
-        }
+  "skills": {
+    "GET /api/skills": {
+      "description": "serves an array of all skills, on a key of skills",
+      "queries": [],
+      "send": {}, 
+      "exampleResponse": {
+        "skills": [
+          {
+            "skill_id": 1,
+            "title": "HTML 5",
+            "icon_class": "fa-brands fa-html5",
+            "icon_color": "#e34c26",
+            "icon_background_color": null,
+            "image_id": null
+          },
+          {
+            "skill_id": 2,
+            "title": "CSS 3",
+            "icon_class": "fa-brands fa-css3",
+            "icon_color": "blue",
+            "icon_background_color": null,
+            "image_id": null
+          }
+        ]
+      }
+    },
+
+    "GET /api/skills/:skill_id": {
+      "description": "serves an object containing the requested skill by skill_id, on a key of skill",
+      "queries": [],
+      "send": {}, 
+      "exampleResponse": {
+        "skill":
+          {
+            "skill_id": 1,
+            "title": "HTML 5",
+            "icon_class": "fa-brands fa-html5",
+            "icon_color": "#e34c26",
+            "icon_background_color": null,
+            "image_id": null
+          }
+      }
+    },
+
+    "POST /api/skills": {
+      "description": "allows the client to create a new skill, the client must send a title(this is required), optional data key value pairs are icon_class (this the Font Awesome class for the icon), icon_color (changes the icon color from standard Font Awesome color), icon_background_color (changes the background color from standard Font Awesome color), image_id (only send if Font Awesome icon is unavailable) the response is the newly created skill object on a key of skill",
+      "queries": [],
+      "send": {
+        "title": "React",
+        "icon_class": "fa-brands fa-react",
+        "icon_color": "blue",
+        "icon_background_color": "black",
+        "image_id": null
+      },
+      "exampleResponse": {
+        "skill":
+          {
+            "skill_id": 3,
+            "title": "React",
+            "icon_class": "fa-brands fa-react",
+            "icon_color": "blue",
+            "icon_background_color": "black",
+            "image_id": null
+          }
+      }
+    },
+
+    "PATCH /api/skills/:skill_id": {
+     "description": "allows the client to update a skill by skill_id, the client can update the title(must not be null), icon_class, icon_color, icon_background_color, image_id the response is the updated created skill object on a key of skill",
+      "queries": [],
+      "send": {
+        "title": "React",
+        "icon_class": null,
+        "icon_color": null,
+        "icon_background_color": null,
+        "image_id": 4
+      },
+      "exampleResponse": {
+        "skill":
+          {
+            "skill_id": 3,
+            "title": "React", 
+            "icon_class": null,
+            "icon_color": null,
+            "icon_background_color": null,
+            "image_id": 4
+          }
+      }
+    },
+
+    "DELETE /api/skills/:skill_id": {
+      "description": "allows the client to delete an skill by skill_id",
+      "queries": [],
+      "send": {}, 
+      "exampleResponse": {}
     }
   },
 
-  "POST /api/images": {
-    "description": "allows the client to create a new image, the client must send both an alt_text(description of the image) and an image_url, the response is the newly created image object on a key of image",
-    "queries": [],
-    "send": {
-      "alt_text": "Gareth and members of his Northcoders final project team",
-      "image_url": "./Assets/Images/Gallery-images/northcoders.jpg"
-    }, 
-    "exampleResponse": {
-      "image":
-        {
-          "image_id": 3,
-          "alt_text": "Gareth and members of his Northcoders final project team",
-          "image_url": "./Assets/Images/Gallery-images/northcoders.jpg"
-        }
-    }
-  },
+  "gallery": {
+    "GET /api/gallery": {
+      "description": "serves an array of all the gallery, on a key of gallery",
+      "queries": [],
+      "send": {}, 
+      "exampleResponse": {
+          "gallery": [
+            {
+              "gallery_item_id": 1,
+              "title": "Final day at Northcoders, project group",
+              "description": "My final project group, at the Northcodeers offices in manchester just before our  presentations",
+              "image_id": 1
+            },
+            {
+              "gallery_item_id": 2,
+              "title": "At the summit of Mount Blanc",
+              "description": "At the top of Mount Blanc, after a two day climb with stop offs at the Tête Rousse Hut 3167m, and Goutier hut at 3835m",
+              "image_id": 2
+            }
+        ]
+      }
+    },
 
-  "PATCH /api/images/:image_id": {
-    "description": "allows the client to update an image by image_id, the client can update both or one of the alt_text(description of the image) or the image_url, its response is the updated image on a key of image",
-    "queries": [],
-    "send": {
-      "alt_text": "Gareth and members of his Northcoders final project team, northcoders office",
-      "image_url": "./Assets/Images/Gallery-images/northcoders-team.jpg"
-    }, 
-    "exampleResponse": {
-      "image":
-        {
-          "image_id": 3,
-          "alt_text": "Gareth and members of his Northcoders final project team, northcoders office",
-          "image_url": "./Assets/Images/Gallery-images/northcoders-team.jpg"
-        }
-    }
-  },
+    "GET /api/gallery/:gallery_id": {
+      "description": "serves an object containing the requested gallery item by gallery_id, on a key of gallery",
+      "queries": [],
+      "send": {}, 
+      "exampleResponse": {
+        "gallery":
+          {
+              "gallery_item_id": 3,
+              "title": "Self built brick pizza oven",
+              "description": "My traditional brick pizza oven",
+              "image_id": 3
+          }
+      }
+    },
 
-  "DELETE /api/images/:image_id": {
-    "description": "allows the client to delete an image by image_id",
-    "queries": [],
-    "send": {}, 
-    "exampleResponse": {}
+    "POST /api/gallery": {
+      "description": "allows the client to create a new gallery, the client must send a title, and image_id(these is required), the optional data key value pair is description, the response is the newly created gallery object on a key of gallery",
+      "queries": [],
+      "send": {
+        "title": "walking in the sand",
+        "description": "On the beach while in Southport",
+        "image_id": 4
+      },
+      "exampleResponse": {
+        "gallery":
+          {
+            "gallery_id": 3,
+            "title": "walking in the sand",
+            "description": "On the beach while in Southport",
+            "image_id": 4
+          }
+      }
+    },
+
+    "PATCH /api/gallery/:gallery_id": {
+     "description": "allows the client to update a gallery item by gallery_id, the client can update either or all of the title, image_id(must not be sent as null) and description, the response is the updated created gallery object on a key of gallery",
+      "queries": [],
+      "send": {
+        "title": "Self built brick pizza oven",
+        "description": "My traditional brick pizza oven",
+        "image_id": 3
+      },
+      "exampleResponse": {
+        "gallery":
+          {
+            "gallery_id": 3,
+            "title": "Self built brick pizza oven",
+            "description": "My traditional brick pizza oven",
+            "image_id": 3
+          }
+      }
+    },
+
+    "DELETE /api/gallery/:gallery_id": {
+      "description": "allows the client to delete an gallery item by gallery_id",
+      "queries": [],
+      "send": {}, 
+      "exampleResponse": {}
+    }
   }
+
   
 }
