@@ -27,7 +27,7 @@ Its built using Express and sql, and utilising the model-view-controller(MVC) de
 - PATCH/api/gallery/:gallery_id
 - DELETE/api/gallery/:gallery_id
 
-## coming soon...
+## coming soon
 
 ### Projects
 - GET/api/projects  
